@@ -1,19 +1,24 @@
 package es.aht.tmp;
 
-import picocli.CommandLine;
+import io.quarkus.grpc.GrpcClient;
+import org.jboss.logging.Logger;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
+
 
 @Command(name = "greeting", mixinStandardHelpOptions = true)
 public class GreetingCommand implements Runnable {
+    private static final Logger LOG = Logger.getLogger(GreetingCommand.class);
 
-    @Parameters(paramLabel = "<name>", defaultValue = "picocli",
-        description = "Your name.")
-    String name;
+    @GrpcClient("test")
+    TestService testService;
 
     @Override
     public void run() {
-        System.out.printf("Hello %s, go go commando!\n", name);
+        var request = Main.Request.newBuilder().setId("as").build();
+        var response = testService.aMethod(request);
+        response.subscribe().with(
+                item -> LOG.info(item.getId()),
+                error -> LOG.error(error.getMessage())
+        );
     }
-
 }

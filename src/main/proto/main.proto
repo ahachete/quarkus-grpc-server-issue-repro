@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "es.aht.tmp";
+
+
+service TestService {
+  rpc aMethod(Request) returns (Response);
+}
+
+message Request {
+  string id = 1;
+}
+
+message Response {
+  string id = 1;
+}
